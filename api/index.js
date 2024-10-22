@@ -1,18 +1,20 @@
-import express from "express";
-import mongoose from "mongoose";
 import dotenv from "dotenv";
+import express, { json } from "express";
 import { connectDB } from "./Database/MongoDBConnect.js";
+import { authRouter } from "./routes/authRoutes.js";
+
 dotenv.config();
 const app = express();
-connectDB();
 const port = 3000;
 
 
-// app.get('/', (req, res, next) => {
-//     res.json("Connected Successfully")
-// })
-
+connectDB();
+app.use(json());
 app.listen(port, () => {
     console.log(`Server is running on ${port}`)
 }
 )
+
+
+
+app.use("/api/auth",authRouter)
