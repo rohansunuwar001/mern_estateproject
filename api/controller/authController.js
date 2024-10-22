@@ -14,10 +14,9 @@ export let createUserController = async (req, res, next) => {
 
         data={
             ...data,
+            isVerification:false,
             password:hashedPassword
         }
-
-
 
         let result = await userModel.create(data);
         res.status(201).json({
@@ -26,9 +25,6 @@ export let createUserController = async (req, res, next) => {
             data: result
         })
     } catch (error) {
-        res.status(400).json({
-            success: false,
-            message: error.message
-        })
+      next(error);
     }
 }
