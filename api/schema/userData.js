@@ -15,9 +15,6 @@ let createUserSchema = new mongoose.Schema({
     password:{
         type:String,
         required:[true,"Password is required"]
-    }, gender: {
-        type: String,
-        required: [true, "gender is required"]
     },
     role: {
         type: String,
