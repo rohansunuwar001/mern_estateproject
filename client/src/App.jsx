@@ -7,6 +7,7 @@ import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
+import VerifyEmail from "./pages/VerifyEmail";
 
 const App = () => {
   return<BrowserRouter>
@@ -18,6 +19,8 @@ const App = () => {
     <Route path="sign-up" element={<SignUp />}></Route>
     <Route path="profile" element={<Profile />}></Route>
     <Route path="about" element={<About />}></Route>
+    <Route path="verify-email" element={<VerifyEmail />}></Route>
+
     </Route>
   </Routes>
 <Footer />

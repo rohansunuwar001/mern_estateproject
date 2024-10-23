@@ -1,6 +1,7 @@
 import { Router } from "express";
-import { createUserController } from "../controller/authController.js";
+import { createUserController, verifyEmail } from "../controller/authController.js";
 
 
  export let authRouter = Router();
- authRouter.post("/signup",createUserController);
+ authRouter.route("/signup").post(createUserController);
+ authRouter.route("/verify-email").post(verifyEmail);
