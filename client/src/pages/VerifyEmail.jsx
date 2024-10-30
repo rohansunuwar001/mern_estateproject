@@ -1,6 +1,7 @@
 import  { useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { hitApi } from '../Services/hitApi';
+import { toast, ToastContainer } from 'react-toastify';
 
 const VerifyEmail = () => {
     let [query] = useSearchParams();
@@ -15,10 +16,10 @@ const VerifyEmail = () => {
                 Authorization: `Bearer ${token}`,
             },
         })
-        // console.log(result);
+        alert(result.data.message);
         navigate(`/sign-in`)
       } catch (error) {
-        
+        console.log(error.message)
       }
     }
 
@@ -28,7 +29,14 @@ const VerifyEmail = () => {
     ,[])
     
   return (
-    <div>VerifyEmail</div>
+    <div>
+        
+        <ToastContainer />
+<div>
+    
+          VerifyEmail
+    </div>  
+          </div>
   )
 }
 
