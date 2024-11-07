@@ -106,11 +106,17 @@ export const signin = async (req,res,next) => {
         })
         // For user is exists or not 
         if(!validUser){
-            throw new Error("Invalid Credientials");
+            return res.status(404).json({
+                success:false,
+                message:"User not found. Please signup first to became our user."
+            })
         }
         // if user is valid or not
         if(!validUser.isVerification){
-            throw new Error("Email is not verified");
+            return res.status(401).json({
+                success:false,
+                message:"Email isn't verified. Please verify your email first."
+            })
         }
 
         // for password valid or not 
@@ -119,7 +125,10 @@ export const signin = async (req,res,next) => {
 
         // If password is correct or not
         if(!isValidPassword){
-            throw new Error("Invalid Credientials");
+            return res.status(401).json({
+                success:false,
+                message:"Password is incorrect. Please check your password."
+            })
         }
         
 
@@ -132,12 +141,20 @@ export const signin = async (req,res,next) => {
             expiresIn:'12h'
         }
 
+        // generating the token from jwt
         let token = await jwt.sign(infoObj,secretKey,expiryInfo);
 
 
+        // remvoing the hashed password from the output
         const {
             password:pass, ...rest
          } = validUser._doc;
+
+
+
+
+        // adding cookie in response
+
 
         res.cookie('access_token',token,{httpOnly:true}).status(200).json({
             success:true,
