@@ -166,3 +166,116 @@ export const signin = async (req,res,next) => {
         next(error)
     }
 }
+
+
+
+// export const google = async (req,res,next) => {
+
+//   try {
+//      // For JSON WEB TOKEN (JWT needs 3 things (id,secretkey,expiryInfo))
+//      let infoObj = {
+//         id: validUser._id
+//     }
+//     let expiryInfo={
+//         expiresIn:'12h'
+//     }
+
+//     const validUser = await userModel.findOne({email: req.body.email});
+//     if (user) {
+//         const token = jwt.sign(infoObj,secretKey,expiryInfo);
+//         const {password:pass, ...rest} = validUser._doc;
+
+//         res.cookie('access_token',token, { httpOnly: true}).status(200).json(rest);
+//     } else {
+//         const generatePassword = Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8);
+//         const hashedPassword = bcrypt.hashSync(generatePassword,10);
+//         const newUser = new userModel({
+//             username: req.body.name.split(" ").join("").toLowerCase() + Math.random().toString(36).slice(-4),
+//             email:req.body.email,
+//             password:hashedPassword,
+//             role:"user",
+//             isVerification:true,
+//         });
+//         await newUser.save();
+
+//         const token = jwt.sign(infoObj,secretKey,expiryInfo);
+//         const {password:pass, ...rest} = newUser._doc;
+
+//         res.cookie('access_token',token, { httpOnly: true}).status(200).json(rest);
+
+
+// // Send email
+//         await sendEmail({
+//             to: email,
+//             subject: "Account Registration",
+//             html: `<h1>Your account has been created successfully. Thank you for using our website</h1>`,
+//         });
+//     }
+//   } catch (error) {
+//     res.status(400).json({
+//         success:false,
+//         message:error.message
+//     })
+//   }
+// }
+
+export const google = async (req, res, next) => {
+    try {
+      // Look for the user by email
+      const validUser = await userModel.findOne({ email: req.body.email });
+  
+      if (validUser) {
+        // User exists, create JWT token
+        let infoObj = { id: validUser._id };
+        let expiryInfo = { expiresIn: '12h' };
+  
+        // Create token
+        const token = jwt.sign(infoObj, secretKey, expiryInfo);
+  
+        // Destructure the password out of the user data
+        const { password: pass, ...rest } = validUser._doc;
+  
+        // Set the token as a cookie and return user data
+        res.cookie('access_token', token, { httpOnly: true }).status(200).json(rest);
+      } else {
+        // User doesn't exist, create a new user
+        const generatePassword = Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8);
+        const hashedPassword = bcrypt.hashSync(generatePassword, 10);
+  
+        const newUser = new userModel({
+          username: req.body.name.split(' ').join('').toLowerCase() + Math.random().toString(36).slice(-4),
+          email: req.body.email,
+          password: hashedPassword,
+          role: 'user',
+          isVerification: true,
+          avatar: req.body.photo,
+        });
+  
+        await newUser.save();
+  
+        // Create JWT token for new user
+        let infoObj = { id: newUser._id };
+        let expiryInfo = { expiresIn: '12h' };
+  
+        const token = jwt.sign(infoObj, secretKey, expiryInfo);
+  
+        // Destructure the password and return the rest of the user data
+        const { password: pass, ...rest } = newUser._doc;
+  
+        // Set the token as a cookie and return user data
+        res.cookie('access_token', token, { httpOnly: true }).status(200).json(rest);
+  
+        // Send welcome email
+        await sendEmail({
+          to: req.body.email,
+          subject: 'Account Registration',
+          html: `<h1>Your account has been created successfully. Thank you for using our website</h1>`,
+        });
+      }
+    } catch (error) {
+      res.status(400).json({
+        success: false,
+        message: error.message,
+      });
+    }
+  };

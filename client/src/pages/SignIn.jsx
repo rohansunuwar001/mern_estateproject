@@ -1,12 +1,14 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { hitApi } from "../Services/hitApi";
 import { useDispatch, useSelector } from "react-redux";
 import { signInFailure, signInStart, signInSuccess } from "../../redux/user/userSlice";
+import OAuth from "../components/OAuth";
 
 const SignIn = () => {
+  let navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -40,6 +42,8 @@ const SignIn = () => {
       dispatch(signInSuccess(toast(data.message)));
       setFormData({ email: "", password: "", role: "user" });
       console.log(result) // Clear form
+      navigate('/');
+      
     } catch (error) {
       // setError(error.response?.data?.message || error.message); // Use Axios error handling
       dispatch(signInFailure(error.response?.data?.message || error.message));
@@ -77,6 +81,7 @@ const SignIn = () => {
         >
           {loading ? 'Loading...' : 'Sign In'}
         </button>
+        <OAuth />
       </form>
 
       <div className="flex gap-2 mt-5">
