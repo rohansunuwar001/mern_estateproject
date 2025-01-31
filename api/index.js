@@ -1,9 +1,11 @@
-import dotenv from "dotenv";
-import express from "express";
 import cors from "cors";
+import dotenv from "dotenv";
+import express, { json } from "express";
 import { connectDB } from "./Database/MongoDBConnect.js";
 import { authRouter } from "./routes/authRoutes.js";
-import { json } from "express";
+import fileRouter from "./routes/fileRouter.js";
+
+
 
 dotenv.config();
 const app = express();
@@ -15,6 +17,7 @@ connectDB();
 // Middleware
 app.use(cors());
 app.use(json()); // json() is already part of express
+app.use(express.static('./api/public'));
 
 // Route for the root
 app.get('/', (req, res) => {
@@ -23,6 +26,8 @@ app.get('/', (req, res) => {
 
 // Authentication routes
 app.use("/api/auth", authRouter);
+app.use('/file',fileRouter);
+
 
 // Error handling middleware
 app.use((err, req, res, next) => {

@@ -156,10 +156,10 @@ export const signin = async (req,res,next) => {
         // adding cookie in response
 
 
-        res.cookie('access_token',token,{httpOnly:true}).status(200).json({
+        res.status(200).json({
             success:true,
             message:"User Login Successfully",
-            data:rest,
+            data:validUser,
             token:token
         })
     } catch (error) {
@@ -167,57 +167,6 @@ export const signin = async (req,res,next) => {
     }
 }
 
-
-
-// export const google = async (req,res,next) => {
-
-//   try {
-//      // For JSON WEB TOKEN (JWT needs 3 things (id,secretkey,expiryInfo))
-//      let infoObj = {
-//         id: validUser._id
-//     }
-//     let expiryInfo={
-//         expiresIn:'12h'
-//     }
-
-//     const validUser = await userModel.findOne({email: req.body.email});
-//     if (user) {
-//         const token = jwt.sign(infoObj,secretKey,expiryInfo);
-//         const {password:pass, ...rest} = validUser._doc;
-
-//         res.cookie('access_token',token, { httpOnly: true}).status(200).json(rest);
-//     } else {
-//         const generatePassword = Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8);
-//         const hashedPassword = bcrypt.hashSync(generatePassword,10);
-//         const newUser = new userModel({
-//             username: req.body.name.split(" ").join("").toLowerCase() + Math.random().toString(36).slice(-4),
-//             email:req.body.email,
-//             password:hashedPassword,
-//             role:"user",
-//             isVerification:true,
-//         });
-//         await newUser.save();
-
-//         const token = jwt.sign(infoObj,secretKey,expiryInfo);
-//         const {password:pass, ...rest} = newUser._doc;
-
-//         res.cookie('access_token',token, { httpOnly: true}).status(200).json(rest);
-
-
-// // Send email
-//         await sendEmail({
-//             to: email,
-//             subject: "Account Registration",
-//             html: `<h1>Your account has been created successfully. Thank you for using our website</h1>`,
-//         });
-//     }
-//   } catch (error) {
-//     res.status(400).json({
-//         success:false,
-//         message:error.message
-//     })
-//   }
-// }
 
 export const google = async (req, res, next) => {
     try {
@@ -236,13 +185,19 @@ export const google = async (req, res, next) => {
         const { password: pass, ...rest } = validUser._doc;
   
         // Set the token as a cookie and return user data
-        res.cookie('access_token', token, { httpOnly: true }).status(200).json(rest);
+        res.status(200).json({
+            success:true,
+            message:"User Login Successfully",
+            data:validUser,
+            token:token
+
+        });
       } else {
         // User doesn't exist, create a new user
         const generatePassword = Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8);
         const hashedPassword = bcrypt.hashSync(generatePassword, 10);
   
-        const newUser = new userModel({
+        const newUser = await userModel.create({
           username: req.body.name.split(' ').join('').toLowerCase() + Math.random().toString(36).slice(-4),
           email: req.body.email,
           password: hashedPassword,
@@ -251,7 +206,6 @@ export const google = async (req, res, next) => {
           avatar: req.body.photo,
         });
   
-        await newUser.save();
   
         // Create JWT token for new user
         let infoObj = { id: newUser._id };
@@ -263,7 +217,12 @@ export const google = async (req, res, next) => {
         const { password: pass, ...rest } = newUser._doc;
   
         // Set the token as a cookie and return user data
-        res.cookie('access_token', token, { httpOnly: true }).status(200).json(rest);
+        res.status(200).json({
+            success:true,
+            message:"Successfully Logged in",
+            data:newUser,
+            token:token,
+        });
   
         // Send welcome email
         await sendEmail({
@@ -279,3 +238,57 @@ export const google = async (req, res, next) => {
       });
     }
   };
+
+   export let profile = async (req,res,next) => {
+     try {
+        const id = req._id;
+        const result = await userModel.findById(id);
+        res.status(200).json({
+            success:true,
+            message:"Profile found successffully",
+            data:result
+        })
+     } catch (error) {
+        res.status(400).json({
+            success:false,
+            message:error.message
+        })
+     }
+   }
+   
+
+
+
+  export let updateUserControllor = async(req, res, next) => {
+    try {
+        let result = await userModel.findByIdAndUpdate(req.params.id, req.body, {
+          new: true,
+        });
+        res.json({
+          success: true,
+          message: "User updated successfully",
+          data: result,
+        });
+      } catch (error) {
+        res.json({
+          success: false,
+          message: error.message,
+        });
+      }
+}
+
+export let deleteUserControllor = async(req, res, next) => {
+    try {
+        let result = await userModel.findByIdAndDelete(req.params.id);
+        res.json({
+            success: true,
+            message: "Web User Delete successfully",
+            data: result,
+        })
+    } catch (error) {
+        res.json({
+            success: false,
+            message: error.message,
+        })
+    }
+}

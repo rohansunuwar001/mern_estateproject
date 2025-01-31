@@ -1,7 +1,7 @@
-import  { useEffect } from 'react';
+import { useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { ToastContainer } from 'react-toastify';
 import { hitApi } from '../Services/hitApi';
-import { toast, ToastContainer } from 'react-toastify';
 
 const VerifyEmail = () => {
     let [query] = useSearchParams();

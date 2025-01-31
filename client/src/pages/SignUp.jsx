@@ -15,6 +15,8 @@ const SignUp = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
+
+
   const handleChange = (e) => {
     // const { id, value } = e.target;
     setFormData({
@@ -46,6 +48,7 @@ const SignUp = () => {
 
       toast(data.message);
       setFormData({ username: "", email: "", password: "", role: "user" });
+      
       console.log(result) // Clear form
     } catch (error) {
       setError(error.response?.data?.message || error.message); // Use Axios error handling

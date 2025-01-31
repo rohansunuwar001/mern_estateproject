@@ -41,7 +41,11 @@ const SignIn = () => {
 
       dispatch(signInSuccess(toast(data.message)));
       setFormData({ email: "", password: "", role: "user" });
-      console.log(result) // Clear form
+     
+      console.log(result)
+       // Clear form
+
+      
       navigate('/');
       
     } catch (error) {

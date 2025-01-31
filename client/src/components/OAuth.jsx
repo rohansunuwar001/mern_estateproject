@@ -37,6 +37,7 @@ const OAuth = () => {
 
       // Dispatch success action to update the Redux state
       dispatch(signInSuccess(res.data));
+      console.log(res)
       navigate('/');
     } catch (error) {
       console.log('Could not sign in with Google', error);
